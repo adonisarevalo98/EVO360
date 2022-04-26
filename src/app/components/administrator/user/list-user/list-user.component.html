@@ -1,0 +1,139 @@
+
+
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+    <div class="wrapper">
+        <app-topbar></app-topbar>
+        <app-sidebar></app-sidebar>  <!-- ./Sidebar -->
+    
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper scrollable-table" >
+           <div class="toast" id="alert_toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-body text-white">
+            </div>
+          </div>
+        <div id="toastsContainerTopRight" class="toasts-top-right fixed"></div>
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+          <div class="container-fluid">
+            <div class="row mb-2">
+              <div class="col-sm-6">
+                <h1 class="m-0">Lista de usuarios</h1>
+              </div><!-- /.col -->
+    
+            </div><!-- /.row -->
+                <hr class="border-primary">
+          </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+    
+        <!-- Main content -->
+        <section class="content">
+          <div class="container-fluid">
+
+            <div class="col-lg-12 ">
+              <div class="card card-outline card-primary">
+                  <div class="card-header container-fluid ">
+                       <div class=" card-tools">
+                      <a class="btn btn-block btn-sm btn-primary btn-flat border-primary" routerLink="/create-user"><i class="fa fa-plus"></i> Crear nuevo usuario</a>
+                  </div>
+                    <div class="col-sm-2"></div>   
+                      <div class="col-sm-3" >
+                        <label for="" class="control-label">Empresa</label>
+                        <select class="form-control" [(ngModel)]="id_company" name="id_company"
+                        #compC="ngModel">
+                        <option *ngFor="let companies of companies" [value]="companies.id">{{companies.company}}</option>
+                      </select>
+                      <button class="btn-primary" (click)="ListUsers()">Cargar</button>
+                    </div>
+                  </div>
+                  
+                  <div class="card-body " >
+                    <div class="spinner" *ngIf="!load"> <!-- Spinner de carga de datos -->
+                      <div class="overlay">
+                                <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                              </div>
+                      </div>
+                    <mat-form-field>
+                      <input matInput (keyup)="applyFilter($event.target.value)" 
+                      placeholder="Escriba algo para filtrar">
+                    </mat-form-field>
+
+                    
+                    <div class=" mat-elevation-z8">
+                      <mat-table  class="table-bordered " [dataSource]="users" matSort *ngIf="load">
+
+                        <ng-container matColumnDef="#">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header>#</mat-header-cell>
+                          <mat-cell *matCellDef="let i=index"> {{i+1}} </mat-cell>
+                       </ng-container>
+                 
+                        <ng-container matColumnDef="Nombre">
+                              <mat-header-cell *matHeaderCellDef mat-sort-header> Nombre</mat-header-cell>
+                              <mat-cell *matCellDef="let row"> {{row.name + ' ' + row.last_name}} </mat-cell>
+                        </ng-container>
+                
+                        <ng-container matColumnDef="Departamento">
+                              <mat-header-cell *matHeaderCellDef mat-sort-header> Departamento </mat-header-cell>
+                      <mat-cell *matCellDef="let row"> {{row.department}} </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="Categoría">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header> Categoría </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.user_category}} </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="Estado">
+                      <mat-header-cell *matHeaderCellDef mat-sort-header> Estado </mat-header-cell>
+                        
+                      <mat-cell  *matCellDef="let row">
+                          <span *ngIf="row.status==1" class='badge badge-success'>Activada</span>
+                          <span *ngIf="row.status==2" class='badge badge-danger mx-1'>Desactivada</span>
+                       </mat-cell>
+                    </ng-container>
+                
+                        <ng-container matColumnDef="Acción">
+                              <mat-header-cell *matHeaderCellDef mat-sort-header> Acciones</mat-header-cell>
+                              <mat-cell *matCellDef="let row"> 
+                                <button type="button" class="btn btn-primary btn-sm btn-flat border-info wave-effect dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                                  Acción
+                                </button>
+                                <div class="dropdown-menu">
+                                  <a type="button" class="dropdown-item" >Ver</a>
+                                  <div class="dropdown-divider"></div>
+                                  <a type="button" class="dropdown-item" (click)="update(row.id)" routerLink="/update-user">Editar</a>
+                                  <div class="dropdown-divider"></div>
+                                  <a type="button" class="dropdown-item " (click)="delete(row.id)">Eliminar</a>
+                                </div>
+                           </mat-cell>
+                        </ng-container>
+                
+                        <mat-header-row *matHeaderRowDef="displayedColumns" class="encabezado"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                  </mat-table>
+                  <mat-paginator [pageSizeOptions]="[5, 10, 25, 50, 100]" [pageSize]="25" [showFirstLastButtons]></mat-paginator>
+                </div>
+                      <ng-template #noResults>
+                          <p>No hay resultados para: "{{text}}".</p>
+                        </ng-template>
+                  
+                </div>
+              </div>
+          </div><!--/. main content -->
+
+          </div><!--/. container-fluid -->
+        </section>
+        <!-- /.content -->
+      </div>
+      <!-- /.content-wrapper -->
+    
+      <!-- Control Sidebar -->
+      <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+      </aside>
+      <!-- /.control-sidebar -->
+    
+      <!-- Main Footer -->
+      <app-footer></app-footer>
+    </div>
+    <!-- ./wrapper -->
+    </body>

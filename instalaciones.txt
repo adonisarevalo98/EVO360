@@ -1,0 +1,85 @@
+1)
+  *npm install dotenv (para esconder la API_KEY como variable de entorno "en archivo .env")
+          //Documentación https://www.npmjs.com/package/dotenv
+  *npm i --save-dev @types/node (requerido por dotenv)
+  
+   *npm i ngx-encrypt-cookie --save (para encriptar cookies)
+          //Documentación https://www.npmjs.com/package/ngx-encrypt-cookie
+  
+  *npm install crypto-js --save (para encriptar variables del localstorage)
+           //Documentación https://cryptojs.gitbook.io/docs/#ciphers
+
+   *npm install ngx-toastr --save
+   *npm install sweetalert2
+
+   *npm install moment --save (para gestion y conversion de inputs tipo date, datetime local, etc)
+          //Documentación https://momentjs.com/
+  
+ W
+2) Verificar en el archivo tsconfig.json la variable  "strict": false
+
+3) instalación de MDBA (Para las ventanas modales)
+            //Documentación https://mdbootstrap.com/docs/angular/getting-started/installation/
+   *npm install @angular/cdk --save
+   *npm install angular-bootstrap-md --save
+   * importar en app.module.ts
+        import { MDBBootstrapModule } from 'angular-bootstrap-md';
+        agregar MDBBootstrapModule.forRoot() en los Imports:[]
+   *Agregar en angular.json
+            "styles": [
+            "node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss",
+            "node_modules/@fortawesome/fontawesome-free/scss/solid.scss",
+            "node_modules/@fortawesome/fontawesome-free/scss/regular.scss",
+            "node_modules/@fortawesome/fontawesome-free/scss/brands.scss",
+            "node_modules/angular-bootstrap-md/assets/scss/bootstrap/bootstrap.scss",
+            "node_modules/angular-bootstrap-md/assets/scss/mdb.scss",
+            "node_modules/animate.css/animate.css",
+            "src/styles.scss"
+          ],
+          "scripts": [
+            "node_modules/chart.js/dist/Chart.js",
+            "node_modules/hammerjs/hammer.min.js"
+          ],
+    *npm install -–save chart.js@2.5.0 @types/chart.js @fortawesome/fontawesome-free hammerjs animate.css
+
+ 4) * npm install @angular/material @angular/cdk @angular/animations (Tablas con material Mat-table)
+             //Documentación http://respagblog.azurewebsites.net/angular-material-datatable-con-angular-7/
+            En el app.module 
+              import { MatInputModule } from '@angular/material/input';
+              import {  MatPaginatorModule } from '@angular/material/paginator';
+              import { MatTableModule } from '@angular/material/table';
+              import { MatSortModule } from '@angular/material/sort';
+
+              imports: [
+              BrowserModule,
+              BrowserAnimationsModule,
+              HttpClientModule,
+              MatTableModule,
+              MatPaginatorModule,
+              MatSortModule,
+              MatInputModule
+               ],
+
+
+         
+
+ 
+ //*npm install jquery popper.js
+   //*ir al archivo angular.json y agregar a styles
+        "node_modules/bootstrap/dist/css/bootstrap.css",
+  // *agregar en scripts
+	     "node_modules/jquery/dist/jquery.slim.min.js",
+          "node_modules/popper.js/dist/umd/popper.min.js",
+          "node_modules/bootstrap/dist/js/bootstrap.min.js"
+   //*npm i --save-dev @types/jquery
+   //*npm install @popperjs/core
+   //*npm install jspdf@1.5.3 html2canvas
+   //*npm install @types/jspdf @types/html2canvas -D
+   //*npm i @types/node -D
+   //*npm install --save path-parse
+   //*npm install --save @ng-bootstrap/ng-bootstrap
+   //*ng add @angular/localize
+
+
+Pasar a produccion
+ng build --prod --env=prod

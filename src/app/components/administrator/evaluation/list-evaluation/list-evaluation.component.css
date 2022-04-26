@@ -1,0 +1,6 @@
+.scrollable-table {
+    height: auto;
+    max-width: 100%;
+    min-width: 600px;
+    overflow-x: auto;
+  }

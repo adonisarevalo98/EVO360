@@ -1,0 +1,122 @@
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <div class="dropdown">
+   	<a href="./" class="brand-link">
+        <h3 class="text-center p-0 m-0" *ngIf="($sidebar==1)"><b>ADMIN</b></h3>
+        <h3 class="text-center p-0 m-0" *ngIf="($sidebar==2)"><b>GESTOR</b></h3>
+        <h3 class="text-center p-0 m-0" *ngIf="($sidebar==3)"><b>USUARIO/b</b></h3>
+    </a>
+      
+    </div>
+    <div class="sidebar pb-4 mb-4">
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column nav-flat" data-widget="treeview" role="menu" data-accordion="false">
+         <li class="nav-item dropdown">
+            <a href="./" class="nav-link nav-home">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>
+                Dashboard
+              </p>
+            </a>
+          </li>
+          <li class="nav-item dropdown" *ngIf="($sidebar==1)">
+            <a routerLink="/list-company" class="nav-link nav-company">
+              <i class="nav-icon fas fa-building"></i>
+              <p>
+                Empresas
+              </p>
+            </a>
+          </li> 
+          <li class="nav-item dropdown" *ngIf="($sidebar==1)">
+            <a routerLink="/list-department" class="nav-link nav-department">
+              <i class="nav-icon fas fa-briefcase"></i>
+              <p>
+                Departmentos
+              </p>
+            </a>
+          </li> 
+          <li class="nav-item dropdown" *ngIf="($sidebar==1)">
+            <a routerLink="/list-employment" class="nav-link nav-designation">
+              <i class="nav-icon fas fa-address-book"></i>
+              <p>
+                 Cargos
+              </p>
+            </a>
+          </li>  
+          <li class="nav-item"  *ngIf="($sidebar==1)">
+            <a href="" class="nav-link nav-evaluation">
+              <i class="nav-icon fas fa-tasks"></i>
+              <p>
+                Plantillas
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item dropdown" *ngIf="($sidebar==1)">
+                <a routerLink="/list-criteria-groups" class="nav-link nav-task_list">
+                  <i class="right fas fa-angle-left"></i>
+                  <p>
+                    Criterios de evaluación
+                  </p>
+                </a>
+              </li> 
+              <li class="nav-item dropdown" *ngIf="($sidebar==1)">
+                <a routerLink="/list-template" class="nav-link nav-task_list">
+                  <i class="right fas fa-angle-left"></i>
+                  <p>
+                    Plantillas de items
+                  </p>
+                </a>
+              </li> 
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a href="" class="nav-link nav-evaluation">
+              <i class="nav-icon far fa-edit"></i>
+              <p>
+                Evaluaciones
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item" >
+                <a routerLink="/list-evaluation/evaluations" class="nav-link nav-new_evaluator tree-item">
+                  <i class="fas fa-angle-right nav-icon"></i>
+                  <p>Mis Evaluaciones</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a routerLink="/list-autoevaluation/auto-evaluations" class="nav-link nav-evaluator_list tree-item">
+                  <i class="fas fa-angle-right nav-icon"></i>
+                  <p>Autoevaluaciones</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item" *ngIf="($sidebar==1)">
+            <a href="#" class="nav-link nav-edit_user">
+              <i class="nav-icon fas fa-users"></i>
+              <p>
+                Usuarios
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a routerLink="/create-user" class="nav-link nav-new_user tree-item">
+                  <i class="fas fa-angle-right nav-icon"></i>
+                  <p>Crear nuevo</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a routerLink="/list-user" class="nav-link nav-user_list tree-item">
+                  <i class="fas fa-angle-right nav-icon"></i>
+                  <p>List</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </aside>
+  

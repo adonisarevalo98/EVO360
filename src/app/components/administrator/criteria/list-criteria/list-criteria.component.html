@@ -1,0 +1,199 @@
+
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+    <div class="wrapper">
+        <app-topbar></app-topbar>
+        <app-sidebar></app-sidebar>  <!-- ./Sidebar -->
+    
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper">
+           <div class="toast" id="alert_toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-body text-white">
+            </div>
+          </div>
+        <div id="toastsContainerTopRight" class="toasts-top-right fixed"></div>
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+          <div class="container-fluid">
+            <div class="row mb-2">
+              <div class="col-sm-6">
+                <h1 class="m-0">Criterios para {{critGroup_name}}</h1>
+              </div><!-- /.col -->
+    
+            </div><!-- /.row -->
+                <hr class="border-primary">
+          </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+    
+        <!-- Main content -->
+        <section class="content">
+          <div class="container-fluid">
+            
+            <div class="col-lg-12">
+              <div class="card card-outline card-primary">
+                  <div class="card-header">
+                    <div class="row">
+                       <div class="card-tools">
+                        <a class="btn btn-block btn-sm btn-primary btn-flat border-primary" (click)="clearForm(); frame.show()"><i class="fa fa-plus"></i> Crear nuevo criterio</a>
+                    </div>
+                  </div>
+                  </div>
+                                  
+                 
+                  <div class="card-body" > 
+                    <div class="spinner" *ngIf="!load"> <!-- Spinner de carga de datos -->
+                      <div class="overlay">
+                        <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                      </div>
+                      
+                      </div>
+                    <mat-form-field>
+                      <input matInput (keyup)="applyFilter($event.target.value)" 
+                      placeholder="Escriba algo para filtrar">
+                    </mat-form-field>
+                    <div class="example-container mat-elevation-z8">
+                      <mat-table [dataSource]="criteria" matSort *ngIf="load"><!-- Espera a la carga de datos -->
+                 
+                        <ng-container matColumnDef="Criterion">
+                              <mat-header-cell *matHeaderCellDef mat-sort-header> Criterio</mat-header-cell>
+                              <mat-cell *matCellDef="let row"> {{row.criterion}} </mat-cell>
+                        </ng-container>
+                
+                        <ng-container matColumnDef="Description">
+                              <mat-header-cell *matHeaderCellDef mat-sort-header> Descripción </mat-header-cell>
+                      <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
+                        </ng-container>
+
+                        <ng-container matColumnDef="Percentage">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header>  Porcentaje</mat-header-cell>
+                     <mat-cell *matCellDef="let row"> {{row.percentage}} </mat-cell>
+                        </ng-container>
+                
+                        <ng-container matColumnDef="Action">
+                              <mat-header-cell *matHeaderCellDef mat-sort-header> Acciones</mat-header-cell>
+                              <mat-cell *matCellDef="let row"> <div class="btn-group">
+                                <a href="javascript:void(0)" data-id='dept.id' class="btn btn-primary btn-flat  manage_department"  (click)="select(row.id); frame.show()" >
+                                  <i class="fas fa-edit"></i>
+                                </a>
+                                <button type="button" class="btn btn-danger btn-flat manage_department" data-id="dept.id" (click)="delete(row.id)">
+                                  <i class="fas fa-trash"></i>
+                                </button>
+                          </div> </mat-cell>
+                        </ng-container>
+                        <mat-header-row *matHeaderRowDef="displayedColumns" class="encabezado"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                        
+                  </mat-table>
+                  <table class="table table-hover">
+                    <tbody>
+                        <tr>
+                            <td class="prom" scope="row">Porcentaje total: {{suma}}%</td>
+                            <td class="prom"></td>
+
+                        </tr>
+                    </tbody>
+                </table>
+                 
+                  <mat-paginator [pageSizeOptions]="[5, 10, 25, 50, 100]" [pageSize]="25" [showFirstLastButtons]></mat-paginator>
+                </div>
+                
+                      
+                  
+                </div>
+              </div>
+          </div><!--/. main content -->
+
+
+<!-- modal form -->
+<div mdbModal #frame="mdbModal" class="modal fade left" id="frameModalTop" tabindex="-1" role="dialog"
+aria-labelledby="myModalLabel" aria-hidden="true">
+<form [formGroup]="form">
+<div class="modal-dialog modal-dialog-scrollable" role="document">
+  <div class="modal-content">
+    <div class="modal-header text-center">
+      <h4 class="modal-title w-100 font-weight-bold">Criterio para {{critGroup_name}}</h4>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="frame.hide()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body mx-3">
+      
+      <div class="md-form mb-5">
+        <label for="company">Título de criterio:</label>
+      
+      <input type="text" class="form-control" required
+             mdbInput mdbValidate autocomplete="off" 
+              name="company" [formControl]="criterion">
+              <div *ngIf="criterion?.touched ">
+                <p class="text-center mt-1 text-danger"
+                  *ngIf="criterion?.errors?.['required']" >
+                  <small>Este campo es obligatorio!</small>
+                </p>
+              </div>     
+    </div>
+        <div class="md-form mb-5">
+          <label for="company">Descripción:</label>
+        
+        <input type="text" class="form-control" required
+              mdbInput mdbValidate autocomplete="off" 
+                name="company" [formControl]="description">     
+      </div>
+      <div class="md-form mb-5">
+        <label for="company">Procentaje de evaluación:</label>
+      
+      <input type="text" class="form-control" required
+             mdbInput mdbValidate autocomplete="off" placeholder="Ej. 10.00"
+              name="company" [formControl]="percentage">
+              <div *ngIf="percentage?.touched ">
+                <p class="text-center mt-1 text-danger"
+                  *ngIf="percentage?.errors?.['required']" >
+                  <small>Este campo es obligatorio!</small>
+                </p>
+                <p class="text-center mt-1 text-danger"
+                *ngIf="(percentage?.errors?.['min'])||(percentage?.errors?.['max'])" >
+                <small>El valor mínimo es 0.00 y máximo 100.00</small>
+              </p>
+              <p class="text-center mt-1 text-danger"
+                *ngIf="percentage?.errors?.['pattern']" >
+                <small>Formato incorrecto (Ej. 10.00)</small>
+              </p>
+              </div>     
+    </div>
+  
+    </div>
+    <div class="modal-footer d-flex justify-content-center" *ngIf="method==1">
+      <button mdbBtn color="indigo" class="waves-light" mdbWavesEffect (click)="insert()" 
+      [disabled]="!form.valid">Crear
+        <mdb-icon far icon="paper-plane" class="ml-1"></mdb-icon>
+      </button>
+    </div>
+    <div class="modal-footer d-flex justify-content-center" *ngIf="method==2">
+      <button mdbBtn color="indigo" class="waves-light" mdbWavesEffect (click)="update(); frame.hide()" 
+      [disabled]="!form.valid">Actualizar
+        <mdb-icon far icon="paper-plane" class="ml-1"></mdb-icon>
+      </button>
+    </div>
+   </div>
+</div>
+</form>
+</div><!-- /. modal form -->
+
+
+          </div><!--/. container-fluid -->
+        </section>
+        <!-- /.content -->
+      </div>
+      <!-- /.content-wrapper -->
+    
+      <!-- Control Sidebar -->
+      <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+      </aside>
+      <!-- /.control-sidebar -->
+    
+      <!-- Main Footer -->
+      <app-footer></app-footer>
+    </div>
+    <!-- ./wrapper -->
+    </body>
+

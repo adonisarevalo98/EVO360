@@ -1,0 +1,204 @@
+
+
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+    <div class="wrapper">
+        <app-topbar></app-topbar>
+        <app-sidebar></app-sidebar>  <!-- ./Sidebar -->
+
+
+         <!-- Alerta de acceso denegado -->
+ <div class="content-wrapper" *ngIf="load_denied==1">
+  <div class="toast" id="alert_toast" role="alert" aria-live="assertive" aria-atomic="true">
+   <div class="toast-body text-white">
+   </div>
+ </div>
+<div id="toastsContainerTopRight" class="toasts-top-right fixed"></div>
+<!-- Content Header (Page header) -->
+<div class="content-header">
+ <div class="container-fluid">
+   <div class="row mb-2">
+     <div class="col-sm-6">
+       <h1 class="m-0">Acceso denegado</h1>
+     </div><!-- /.col -->
+   </div><!-- /.row -->
+       <hr class="border-primary">
+ </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+<!-- Main content -->
+<section class="content">
+ <div class="container-fluid">
+   <div class="row">
+    
+       <div class="col-12 col-lg-8 col-md-4">
+         <div class="small-box bg-danger text-white shadow-sm border">
+           <div class="m-5">
+             <p>No estas autorizado para realizar esta evaluación</p>
+           </div>
+           <div class="icon">
+             <i class="fas fa-exclamation-triangle"></i>
+           </div>
+         </div>
+       </div>
+   </div>
+ </div><!--/. container-fluid -->
+</section>
+<!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+    <!-- ----------------------------------------------------------------------------- -->
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper" *ngIf="load_denied!=1">
+           <div class="toast" id="alert_toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-body text-white">
+            </div>
+          </div>
+        <div id="toastsContainerTopRight" class="toasts-top-right fixed"></div>
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+          <div class="container-fluid">
+            <div class="row mb-2">
+              <div class="col-sm-6">
+                <h1 class="m-0">Evaluando a: {{evaluatedData.name}} {{evaluatedData.last_name}}</h1>
+              </div><!-- /.col -->
+    
+            </div><!-- /.row -->
+                <hr class="border-primary">
+          </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+    
+        <!-- Main content -->
+        <section class="content">
+          <div class="container-fluid">
+            <form [formGroup]="form">    <!-- Inicio de formulario -->
+            <div class="col-lg-12">
+              <div class="card card-outline card-primary">
+                  <div class="card-header container-fluid ">
+                       <div class=" card-tools">
+                      <button type="submit" class="btn btn-block btn-sm btn-primary btn-flat border-primary" 
+                       [disabled]="!this.form.valid" (click)="create()"><i class="fa fa-check"></i> Finalizar</button>
+                  </div>
+                    <div class="col-sm-2"></div>   
+                  </div>
+                  
+                  <div class="card-body" >
+                    <div class="spinner" *ngIf="!load"> <!-- Spinner de carga de datos -->
+                      <div class="overlay">
+                                <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                              </div>
+                      </div>
+                    <div class="example-container mat-elevation-z8">
+                      
+                        <div class="table" *ngIf="(load)">
+                          <table mdbTable mdbTableScroll  scrollY="true" 
+                          maxHeight="200" scrollX="true" maxWidth="400">       <!-- Inicio de tabla -->
+                          <thead>
+                            <tr>
+                              <th scope="col">Tras completar la evaluación de click en "Finalizar" </th>
+                            </tr>
+                          </thead>
+                            <tbody>     <!-- Cuerpo de tabla (seccionado por criterios) -->                                    
+                              <tr  mdbTableCol *ngFor="let crit of criteria;let i=index;">  <!-- Items por criterio de evaluación -->
+                            
+                                <td >  <!-- Contenido del criterio (items y ratings) -->
+                                      <h4 class="criterion">{{crit.criterion}} </h4> 
+                                                    <table mdbTable mdbTableScroll  scrollY="true" 
+                                                   maxHeight="200" scrollX="true" maxWidth="400">       <!-- Inicio de lista de items-->
+                                                   <thead>
+                                                    <tr>
+                                                      <th class="mat-column-index">#</th>
+                                                      <th class="mat-column-items">Item</th>
+                                                      <th>Puntajes</th>
+                                                    </tr>
+                                                  </thead>
+                                                  <tbody mdbTableCol *ngFor="let items of evaluation;let i=index;">   <!-- Cuerpo de lista (seccionado por items) -->
+                                                    <tr  *ngIf="items.id_criterion==crit.id"> <!-- Agrupamos los items por criterio de evaluación -->
+                                                      <td> {{i+1}}  </td>
+                                                      <td> {{items.question}} {{items.id_item}} </td>
+                                                      <td> 
+                                                        <mat-radio-group [formControl]="form.get(id_evaitem[i])">  <!-- Grupo de radiobuttons generado por cada item -->
+                                                          <mat-radio-button *ngFor="let ratings of items.ratings" 
+                                                          [value]="ratings.value" >{{ ratings.description}}
+                                                        </mat-radio-button>
+                                                        <div *ngIf="form.get(id_evaitem[i]).touched">
+                                                          <p class="text-danger" *ngIf="form.get(id_evaitem[i]).hasError('required')">Campo requerido</p>
+                                                      
+                                                        </div>  
+                                                        </mat-radio-group>  
+                                                      </td>
+                                            </tr>
+                                            
+                                          </tbody>
+                                        </table>
+                              </td>
+                              
+                              </tr>
+                              <tr  mdbTableCol >  <!-- Items sin criterio de evaluación -->
+                                <td >  <!-- Contenido del criterio (items y ratings) -->
+                                      <h4 class="criterion"> --- </h4> 
+                                                    <table mdbTable mdbTableScroll  scrollY="true" 
+                                                   maxHeight="200" scrollX="true" maxWidth="400">       <!-- Inicio de lista de items-->
+                                                   <thead>
+                                                    <tr>
+                                                      <th class="mat-column-index">#</th>
+                                                      <th class="mat-column-items">Item</th>
+                                                      <th>Opciones</th>
+                                                    </tr>
+                                                  </thead>
+                                                  <tbody mdbTableCol *ngFor="let items of evaluation;let i=index;">   <!-- Cuerpo de lista (seccionado por items) -->
+                                                    <tr  *ngIf="items.id_criterion==null"> <!-- Agrupamos los items que no tienen criterio de evaluación -->
+                                                      <td> {{i+1}}  </td>
+                                                      <td> {{items.question}}  </td>
+                                                      <td> 
+                                                        <mat-radio-group [formControl]="form.get(id_evaitem[i])"> 
+                                                          <mat-radio-button *ngFor="let ratings of items.ratings" 
+                                                          [value]="ratings.value" >{{ ratings.description}}
+                                                        </mat-radio-button>
+                                                        <div *ngIf="form.get(id_evaitem[i]).touched">
+                                                          <p class="text-danger" *ngIf="form.get(id_evaitem[i]).hasError('required')">Campo requerido</p>
+                                                      
+                                                        </div>  
+                                                        </mat-radio-group>  
+                                                      </td>
+                                            </tr>
+                                            
+                                          </tbody>
+                                        </table>
+                              </td>
+                              
+                              </tr>
+                            </tbody>
+                          </table>
+                         </div>
+                </div>
+                </div>
+              </div>
+          </div><!--/. main content -->
+          </form><!-- Fin de formulario -->
+          
+          </div><!--/. container-fluid -->
+        </section>
+        <!-- /.content -->
+      </div>
+      <!-- /.content-wrapper -->
+    
+      <!-- Control Sidebar -->
+      <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+      </aside>
+      <!-- /.control-sidebar -->
+    
+
+<!-- Control Sidebar -->
+<aside class="control-sidebar control-sidebar-dark">
+<!-- Control sidebar content goes here -->
+</aside>
+<!-- /.control-sidebar -->
+
+
+      <!-- Main Footer -->
+      <app-footer></app-footer>
+    </div>
+    <!-- ./wrapper -->
+    </body>

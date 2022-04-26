@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<body class="hold-transition login-page bg-black">
+<div class="login-box">
+  <div class="login-logo">
+    <a href="#" class="text-white"></a>
+  </div>
+  <!-- /.login-logo -->
+  <title>EvalúaSV </title>
+  <h2><b>EvalúaSV - Iniciar Sesión</b></h2>
+  <div class="card">
+    <div class="card-body login-card-body">
+      <form [formGroup]="authdata" id="login-form">
+        <div class="input-group mb-3">
+          <input type="email" class="form-control" name="email" required placeholder="Email" formControlName="email"
+          [ngClass]="{ 'is-invalid': submitted && f.email.errors }" />
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-envelope"></span>
+            </div>
+          </div>
+          <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+            <div *ngIf="f.email.errors.required">El Correo es obligatorio</div>
+            <div *ngIf="f.email.errors.email">Formato de correo incorrecto</div>
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <input type="password" class="form-control" name="password" required placeholder="Password" formControlName="password"
+          [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+          <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+            <div *ngIf="f.password.errors.required">Por favor, ingresa tu contraseña</div>
+          </div>
+        </div>
+        
+        <div class="row">
+          <!-- /.col -->
+          <div class="col-4">
+            <button class="btn btn-primary btn-block"   (click)="IniciarSeccion()">Sign In</button>
+          </div>
+          <!-- /.col -->
+        </div>
+      </form>
+    </div>
+    <!-- /.login-card-body -->
+  </div>
+</div>
+<!-- /.login-box -->
+
+</body>
+</html>

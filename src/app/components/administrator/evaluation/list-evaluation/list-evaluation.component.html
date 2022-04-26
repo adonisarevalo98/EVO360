@@ -1,0 +1,225 @@
+
+
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+    <div class="wrapper">
+        <app-topbar></app-topbar><!-- TopBar -->
+        <app-sidebar></app-sidebar>  <!-- ./Sidebar -->
+    
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper scrollable-table">
+           <div class="toast" id="alert_toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-body text-white">
+            </div>
+          </div>
+        <div id="toastsContainerTopRight" class="toasts-top-right fixed"></div>
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+          <div class="container-fluid">
+            <div class="row mb-2">
+              <div class="col-sm-6">
+                <h1 class="m-0" *ngIf="Route_type=='evaluations'">Lista de evaluaciones</h1>
+                <h1 class="m-0" *ngIf="Route_type=='auto-evaluations'">Lista de Autoevaluaciones</h1>
+              </div><!-- /.col -->
+    
+            </div><!-- /.row -->
+                <hr class="border-primary">
+          </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+    
+        <!-- Main content -->
+        <section class="content">
+          <div class="container-fluid">
+
+            <div class="col-lg-12" *ngIf="!error_container">
+              <div class="card card-outline card-primary">
+                  <div class="card-header">
+                      <div class="card-tools">
+                          <a class="btn btn-block btn-sm btn-primary btn-flat border-primary" 
+                          routerLink="/create-evaluation/{{Route_type}}" *ngIf="user.id_user_category==1||user.id_user_category==2">
+                            <i class="fa fa-plus"></i> Crear nueva evaluación</a>
+                      </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="spinner" *ngIf="!load"> <!-- Spinner de carga de datos -->
+                      <div class="overlay">
+                                <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                              </div>
+                      </div>
+                    <mat-form-field>
+                      <input matInput (keyup)="applyFilter($event.target.value)" 
+                      placeholder="Escriba algo para filtrar">
+                    </mat-form-field>
+
+                    
+                    <div class="example-container mat-elevation-z8">
+                      <mat-table  class="table-bordered" [dataSource]="evaluations" matSort *ngIf="load">
+
+                        <ng-container class="col-lg-2" matColumnDef="#">
+                          <mat-header-cell *matHeaderCellDef mat-sort-header>#</mat-header-cell>
+                          <mat-cell *matCellDef="let i=index"> {{i+1}} </mat-cell>
+                       </ng-container>
+                 
+                        <ng-container matColumnDef="Título">
+                              <mat-header-cell *matHeaderCellDef mat-sort-header> Título</mat-header-cell>
+                              <mat-cell *matCellDef="let row"> {{row.title}} </mat-cell>
+                        </ng-container>
+                
+                        <ng-container matColumnDef="Inicio/Fin">
+                              <mat-header-cell *matHeaderCellDef mat-sort-header> Inicio/Fin </mat-header-cell>
+                      <mat-cell *matCellDef="let row"> {{row.start_date}}<br>{{row.end_date}} </mat-cell>
+                        </ng-container>
+
+                    <ng-container matColumnDef="Estado">
+                      <mat-header-cell *matHeaderCellDef mat-sort-header> Estado </mat-header-cell>
+                        
+                      <mat-cell  *matCellDef="let row">
+                          <span *ngIf="(user.id_user_category==1 && row.status==1)"
+                           class='badge badge-success'>Activada</span>
+                           <span *ngIf="(user.id_user_category==1 && row.status==2)"
+                           class='badge badge-danger mx-1'>Desactivada</span>
+                           <span *ngIf="((row.status==2) && user.id_user_category!=1)"
+                           class='badge badge-danger mx-1'>Desactivada</span>
+                          <span *ngIf="(user.id_user_category!=1 && row.evt_status==1)"
+                           class='badge badge-success'>Completado</span>
+                           <span *ngIf="(user.id_user_category!=1 && row.evt_status==2 && row.status==1)"
+                           class='badge badge-primary'>No iniciado</span>
+                       </mat-cell>
+                    </ng-container>
+                
+                        <ng-container matColumnDef="Acción">
+                              <mat-header-cell *matHeaderCellDef mat-sort-header> Acciones</mat-header-cell>
+                              <mat-cell *matCellDef="let row"> 
+                                <button type="button" class="btn btn-primary btn-sm btn-flat border-info wave-effect dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                                  Acción
+                                </button>
+                                <div class="dropdown-menu">
+                                  <a type="button" class="dropdown-item bg-dark text-white"
+                                   *ngIf="(user.id_user_category==1)||(row.level==1)"  
+                                  (click)="list_evaluators(row.id,row.title); "routerLink="/list-evaluator">Evaluadores</a>
+                                 <div *ngIf="((row.evt_status!=1))">
+                                  <div class="dropdown-divider"></div>
+                                  <a type="button" class="dropdown-item bg-success text-white"
+                                  (click)="evaluating(row.id);" routerLink="/evaluating" >Realizar</a>
+                                </div>
+                                  <div class="dropdown-divider"></div>
+                                  <a type="button" class="dropdown-item bg-primary text-white"
+                                   *ngIf="(user.id_user_category==1)||(row.level==1)"  
+                                  (click)="select(row.id); frame.show()">Editar</a>
+                                  <div class="dropdown-divider"></div>
+                                  <a type="button"  class="dropdown-item bg-danger text-white"
+                                  *ngIf="(user.id_user_category==1)||(row.level==1)"
+                                   (click)="delete(row.id)">Eliminar</a>
+                                </div>
+                           </mat-cell>
+                        </ng-container>
+                
+                        <mat-header-row *matHeaderRowDef="displayedColumns" class="encabezado"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                  </mat-table>
+                  <mat-paginator [pageSizeOptions]="[5, 10, 25, 50, 100]" [pageSize]="25" [showFirstLastButtons]></mat-paginator>
+                </div>
+                  
+                </div>
+              </div>
+          </div><!--/. main content -->
+
+          <!-- modal form -->
+<div mdbModal #frame="mdbModal" class="modal fade left" id="frameModalTop" tabindex="-1" role="dialog"
+aria-labelledby="myModalLabel" aria-hidden="true">
+<form  [formGroup]="form">
+<div class="modal-dialog modal-dialog-scrollable" role="document">
+  <div class="modal-content">
+    <div class="modal-header text-center">
+      <h4 class="modal-title w-100 font-weight-bold">{{form.value.title}}</h4>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="frame.hide()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body mx-3">
+      <div class="md-form mb-5">
+        <label for="description" class="control-label">Descripción:</label>
+      
+      <textarea cols="30" rows="5" class="form-control" 
+             mdbInput mdbValidate id="formGroupExampleInput" autocomplete="off" 
+             [formControl]="description">
+                  </textarea>
+    </div>
+
+      <div class="md-form mb-5">
+        <label for="start_date" class="control-label">Fecha de inicio:</label>
+        <input type="datetime-local" required class="form-control" id="formGroupExampleInput"
+              autocomplete="off" name="start_date"
+              mdbInput mdbValidate [formControl]="start_date">
+              <div *ngIf="start_date?.touched ">
+                <p class="text-center mt-1 text-danger"
+                  *ngIf="start_date?.errors?.['required']" >
+                  <small>Este campo es obligatorio!</small>
+                </p>
+              </div>     
+    </div>
+    <div class="md-form mb-5">
+      <label for="end_date" class="control-label">Fecha de cierre:</label>
+      <input type="datetime-local" required class="form-control" id="formGroupExampleInput"
+              autocomplete="off" name="end_date"
+              mdbInput mdbValidate  [formControl]="end_date">
+              <div *ngIf="end_date?.touched ">
+                <p class="text-center mt-1 text-danger"
+                  *ngIf="end_date?.errors?.['required']" >
+                  <small>Este campo es obligatorio!</small>
+                </p>
+              </div>     
+    </div>
+
+    <div class="md-form mb-5">
+        <label for="department_id" class="control-label">Estado</label>
+        <select class="form-control" required autocomplete="off" [formControl]="status" name="status"> 
+        <option *ngFor="let evsts of evaluation_status" [value]="evsts.id">{{evsts.status}}</option>
+      </select>
+      <div *ngIf="status?.touched ">
+        <p class="text-center mt-1 text-danger"
+          *ngIf="status?.errors?.['required']" >
+          <small>Este campo es obligatorio!</small>
+        </p>
+      </div>                    
+    </div>
+   
+    </div>
+    <div class="modal-footer d-flex justify-content-center">
+      <button mdbBtn color="indigo" class="waves-light" mdbWavesEffect (click)="update(); frame.hide()" 
+      [disabled]="!form.valid">Actualizar
+        <mdb-icon far icon="paper-plane" class="ml-1"></mdb-icon>
+      </button>
+    </div>
+   </div>
+</div>
+</form>
+</div><!-- /. modal form -->
+
+<!-- Error message -->
+<div class="error-content" *ngIf="error_container">
+  <h3><i class="fas fa-exclamation-triangle text-danger"></i> Oops! tenémos un error 404.</h3>
+  <p>
+    No hemos podido encontrar la página que buscas.
+    Mientras tanto, deberias <a href="./">regresar al dashboard</a> o contacta con el administrador.
+  </p>
+</div><!--/. Error message -->
+
+          </div><!--/. container-fluid -->
+        </section>
+        <!-- /.content -->
+      </div>
+      <!-- /.content-wrapper -->
+    
+      <!-- Control Sidebar -->
+      <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+      </aside>
+      <!-- /.control-sidebar -->
+    
+      <!-- Main Footer -->
+      <app-footer></app-footer>
+    </div>
+    <!-- ./wrapper -->
+    </body>
+

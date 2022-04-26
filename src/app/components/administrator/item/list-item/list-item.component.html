@@ -1,0 +1,208 @@
+
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+    <div class="wrapper">
+        <app-topbar></app-topbar>
+        <app-sidebar></app-sidebar>  <!-- ./Sidebar -->
+    
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper">
+           <div class="toast" id="alert_toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-body text-white">
+            </div>
+          </div>
+        <div id="toastsContainerTopRight" class="toasts-top-right fixed"></div>
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+          <div class="container-fluid">
+            <div class="row mb-2">
+              <div class="col-sm-6">
+                <h1 class="m-0">Items de la plantilla: {{template_name}}</h1>
+              </div><!-- /.col -->
+    
+            </div><!-- /.row -->
+                <hr class="border-primary">
+          </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+    
+        <!-- Main content -->
+        <section class="content">
+          <div class="container-fluid">
+            
+
+            <div class="col-lg-12">
+                <div class="card card-outline card-primary">
+                    <div class="card-header">
+                        <div class="card-tools">
+                            <a class="btn btn-block btn-sm btn-primary btn-flat border-primary" (click)="clearForm(); frame.show()"><i class="fa fa-plus"></i> Crear nuevo item</a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                
+                      <mat-form-field>
+                        <input matInput (keyup)="applyFilter($event.target.value)" 
+                        placeholder="Escriba algo para filtrar">
+                      </mat-form-field>
+
+                      
+                      <div class="example-container mat-elevation-z8">
+                        <mat-table class="table-bordered" [dataSource]="items" matSort>
+                           
+                            <ng-container matColumnDef="#">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header>#</mat-header-cell>
+                                <mat-cell *matCellDef="let i=index"> {{i+1}} </mat-cell>
+                          </ng-container>
+
+                          <ng-container matColumnDef="Pregunta">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header>Pregunta</mat-header-cell>
+                                <mat-cell *matCellDef="let row"> {{row.question}} </mat-cell>
+                          </ng-container>
+                  
+                          <ng-container matColumnDef="Tipo">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Tipo </mat-header-cell>
+                            <mat-cell  *matCellDef="let row">
+                                <span *ngIf="row.question_type==0" class='badge'>Pregunta abierta</span>
+                                <span *ngIf="row.question_type==1" class='badge'>Pregunta cerrada</span>
+                             </mat-cell>
+                          </ng-container>
+
+                          <ng-container matColumnDef="Criterio">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Criterio</mat-header-cell>
+                            <mat-cell *matCellDef="let row"> {{row.criterion}} </mat-cell>
+                          </ng-container>
+                         
+                          <ng-container matColumnDef="Acción">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Acciones</mat-header-cell>
+                              <mat-cell *matCellDef="let row">
+                                <button type="button" class="btn btn-primary btn-sm btn-flat border-info wave-effect dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                                    Acción
+                                  </button>
+                                  <div class="dropdown-menu">
+                                    
+                                    <a type="button" class="dropdown-item" (click)="select(row.id); frame.show()">Editar</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a type="button" class="dropdown-item delete_user" (click)="delete(row.id)">Eliminar</a>
+                                  </div>
+                               </mat-cell>
+                                
+                                
+                          </ng-container>
+                  
+                          <mat-header-row *matHeaderRowDef="displayedColumns" class="encabezado"></mat-header-row>
+                          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                    </mat-table>
+                    <mat-paginator [pageSizeOptions]="[5, 10, 25, 50, 100]" [pageSize]="25" [showFirstLastButtons]></mat-paginator>
+                  </div>
+                        <ng-template #noResults>
+                            <p>No hay resultados para: "{{text}}".</p>
+                          </ng-template>
+                    
+                  </div>
+                </div>
+            </div><!--/. main content -->
+
+<!-- modal form -->
+<div mdbModal #frame="mdbModal" class="modal fade left" id="frameModalTop" tabindex="-1" role="dialog"
+aria-labelledby="myModalLabel" aria-hidden="true">
+<form #validatedForm="ngForm">
+<div class="modal-dialog modal-dialog-scrollable" role="document">
+  <div class="modal-content">
+    <div class="modal-header text-center">
+      <h4 class="modal-title w-100 font-weight-bold">Item</h4>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="frame.hide(); clearForm()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body mx-3">
+
+      <div class="md-form mb-5">
+        <label for="department">Pregunta:</label>
+      
+      <input type="text" class="form-control" required
+             mdbInput mdbValidate #questC="ngModel"id="formGroupExampleInput" autocomplete="off" 
+             [(ngModel)]="itemData.question" name="question">
+           <div *ngIf="(questC.invalid && (questC.dirty || questC.touched))" >
+            <mdb-error *ngIf="questC.errors.required">
+                Campo requerido
+          </mdb-error>
+           </div>
+    </div>
+
+    <div class="md-form mb-5">
+        <label for="question_type">Tipo de pregunta</label>
+        <select class="form-control" required [(ngModel)]="itemData.question_type" name="question_type"
+        #queststsC="ngModel">
+        <option *ngFor="let queststs of question_types" [value]="queststs.id">{{queststs.type}}</option>
+      </select>
+      <div *ngIf="(queststsC.invalid && (queststsC.dirty || queststsC.touched))">
+        <p class="text-danger" *ngIf="queststsC.errors.required">Campo requerido</p>
+      </div>                 
+    </div>
+
+    <div class="md-form mb-5">
+      <label for="rating_type">Tipo de puntuación</label>
+      <select class="form-control" required [(ngModel)]="itemData.id_rating_type" name="rating_type"
+      #ratingtsC="ngModel">
+      <option *ngFor="let ratingsts of ratings_types" [value]="ratingsts.id">{{ratingsts.type}}</option>
+    </select>
+    <div *ngIf="(ratingtsC.invalid && (ratingtsC.dirty || ratingtsC.touched))">
+      <p class="text-danger" *ngIf="ratingtsC.errors.required">Campo requerido</p>
+    </div>              
+    <small><i>Estándar(de 0 a 5 puntos); Exámen(de 1 a 10 puntos)</i></small>   
+  </div>
+    
+  <div class="md-form mb-5">
+    <label for="id_criterion">Criterio de evaluación</label>
+    <select class="form-control" [(ngModel)]="itemData.id_criterion" name="id_criterion"
+    #critC="ngModel">
+    <option *ngFor="let crit of criteria" [value]="crit.id">{{crit.criterion}}</option>
+  </select>
+  <div *ngIf="(critC.invalid && (critC.dirty || critC.touched))">
+    <p class="text-danger" *ngIf="critC.errors.required">Campo requerido</p>
+  </div>                 
+</div>
+ 
+    <div class="md-form mb-5">
+        <label for="description">Comentario:</label>
+      
+      <textarea cols="30" rows="5" class="form-control" 
+             mdbInput mdbValidate #desC="ngModel" id="formGroupExampleInput" autocomplete="off" 
+             [(ngModel)]="itemData.comment" name="comment"></textarea>
+    </div>
+    
+    </div>
+    <div class="modal-footer d-flex justify-content-center" *ngIf="method==1">
+      <button mdbBtn color="indigo" class="waves-light" mdbWavesEffect (click)="insert()" 
+      [disabled]="!validatedForm.form.valid">Crear
+        <mdb-icon far icon="paper-plane" class="ml-1"></mdb-icon>
+      </button>
+    </div>
+    <div class="modal-footer d-flex justify-content-center" *ngIf="method==2">
+      <button mdbBtn color="indigo" class="waves-light" mdbWavesEffect (click)="update(); frame.hide()" 
+      [disabled]="!validatedForm.form.valid">Actualizar
+        <mdb-icon far icon="paper-plane" class="ml-1"></mdb-icon>
+      </button>
+    </div>
+   </div>
+</div>
+</form>
+</div><!-- /. modal form -->
+
+
+          </div><!--/. container-fluid -->
+        </section>
+        <!-- /.content -->
+      </div>
+      <!-- /.content-wrapper -->
+    
+      <!-- Control Sidebar -->
+      <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+      </aside>
+      <!-- /.control-sidebar -->
+    
+      <!-- Main Footer -->
+      <app-footer></app-footer>
+    </div>
+    <!-- ./wrapper -->
+    </body>

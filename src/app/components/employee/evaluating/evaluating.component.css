@@ -1,0 +1,18 @@
+ 
+.rdbtn{
+margin:0; 
+padding:0;
+vertical-align: middle; 
+margin-right:5px;    
+}
+
+.mat-column-index{
+    flex: 0 0 10%;
+}
+.mat-column-Items {
+    flex: 0 0 25%;
+}
+.criterion{
+    background-color: rgb(9, 13, 75);
+    color: white;
+}

@@ -1,0 +1,168 @@
+
+
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+    <div class="wrapper">
+        <app-topbar></app-topbar>
+        <app-sidebar></app-sidebar>  <!-- ./Sidebar -->
+    
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper">
+           <div class="toast" id="alert_toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-body text-white">
+            </div>
+          </div>
+        <div id="toastsContainerTopRight" class="toasts-top-right fixed"></div>
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+          <div class="container-fluid">
+            <div class="row mb-2">
+              <div class="col-sm-6">
+                <h1 class="m-0">Gestionar departamentos</h1>
+              </div><!-- /.col -->
+    
+            </div><!-- /.row -->
+                <hr class="border-primary">
+          </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+    
+        <!-- Main content -->
+        <section class="content">
+          <div class="container-fluid">
+            
+
+            <div class="col-lg-12">
+                <div class="card card-outline card-primary">
+                    <div class="card-header">
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <p>Seleccionar empresa</p>
+                        <select class="form-control" autocomplete="off" [(ngModel)]="id_company" name="id_company"
+                        #comC="ngModel" (change)="CompListselectChangeHandler($event)">
+                        <option *ngFor="let companies of companies" [value]="companies.id">{{companies.company}}</option>
+                      </select>
+                        </div>
+                        <div class="col-sm-3">
+                         <div class="card-tools">
+                          <a *ngIf="(id_company != null)" class="btn btn-block btn-sm btn-primary btn-flat border-primary" (click)="clearForm(); frame.show()"><i class="fa fa-plus"></i> Crear nuevo departamento</a>
+                      </div>
+                      </div>
+                    </div>
+                        
+                    </div>
+                    <div class="card-body">
+                
+                      <mat-form-field>
+                        <input matInput (keyup)="applyFilter($event.target.value)" 
+                        placeholder="Escriba algo para filtrar">
+                      </mat-form-field>
+
+                      
+                      <div class="example-container mat-elevation-z8">
+                        <mat-table [dataSource]="depsCompanies" matSort>
+                   
+                          <ng-container matColumnDef="Departamento">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header> Departamento</mat-header-cell>
+                                <mat-cell *matCellDef="let row"> {{row.department}} </mat-cell>
+                          </ng-container>
+                  
+                          <ng-container matColumnDef="Descripción">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header> Descripción </mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
+                          </ng-container>
+                  
+                          <ng-container matColumnDef="Acción">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header> Acciones</mat-header-cell>
+                                <mat-cell *matCellDef="let row"> <div class="btn-group">
+                                  <a href="javascript:void(0)" data-id='dept.id' class="btn btn-primary btn-flat  manage_department"  (click)="select(row.id); frame.show()" >
+                                    <i class="fas fa-edit"></i>
+                                  </a>
+                                  <button type="button" class="btn btn-danger btn-flat manage_department" data-id="dept.id" (click)="delete(row.id)">
+                                    <i class="fas fa-trash"></i>
+                                  </button>
+                            </div> </mat-cell>
+                          </ng-container>
+                  
+                          <mat-header-row *matHeaderRowDef="displayedColumns" class="encabezado"></mat-header-row>
+                          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                    </mat-table>
+                    <mat-paginator [pageSizeOptions]="[5, 10, 25, 50, 100]" [pageSize]="25" [showFirstLastButtons]></mat-paginator>
+                  </div>
+                        <ng-template #noResults>
+                            <p>No hay resultados para: "{{text}}".</p>
+                          </ng-template>
+                    
+                  </div>
+                </div>
+            </div><!--/. main content -->
+
+<!-- modal form -->
+<div mdbModal #frame="mdbModal" class="modal fade left" id="frameModalTop" tabindex="-1" role="dialog"
+aria-labelledby="myModalLabel" aria-hidden="true">
+<form #validatedForm="ngForm">
+<div class="modal-dialog modal-dialog-scrollable" role="document">
+  <div class="modal-content">
+    <div class="modal-header text-center">
+      <h4 class="modal-title w-100 font-weight-bold">Departamento de {{name_company}}</h4>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="frame.hide()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body mx-3">
+      <div class="md-form mb-5">
+        <label for="department">Nombre:</label>
+      
+      <input type="text" class="form-control" required
+             mdbInput mdbValidate #depC="ngModel"id="formGroupExampleInput" autocomplete="off" 
+             [(ngModel)]="depData.department" name="department">
+           <div *ngIf="(depC.invalid && (depC.dirty || depC.touched))" >
+            <mdb-error *ngIf="depC.errors.required">
+                Campo requerido
+          </mdb-error>
+           </div>
+    </div>
+ 
+    <div class="md-form mb-5">
+        <label for="description">Descripción:</label>
+      
+      <textarea cols="30" rows="5" class="form-control" 
+             mdbInput mdbValidate #desC="ngModel" id="formGroupExampleInput" autocomplete="off" 
+             [(ngModel)]="depData.description" name="description"></textarea>
+    </div>
+   
+    </div>
+    <div class="modal-footer d-flex justify-content-center" *ngIf="method==1">
+      <button mdbBtn color="indigo" class="waves-light" mdbWavesEffect (click)="insert()" 
+      [disabled]="!validatedForm.form.valid">Crear
+        <mdb-icon far icon="paper-plane" class="ml-1"></mdb-icon>
+      </button>
+    </div>
+    <div class="modal-footer d-flex justify-content-center" *ngIf="method==2">
+      <button mdbBtn color="indigo" class="waves-light" mdbWavesEffect (click)="update(); frame.hide()" 
+      [disabled]="!validatedForm.form.valid">Actualizar
+        <mdb-icon far icon="paper-plane" class="ml-1"></mdb-icon>
+      </button>
+    </div>
+   </div>
+</div>
+</form>
+</div><!-- /. modal form -->
+
+
+          </div><!--/. container-fluid -->
+        </section>
+        <!-- /.content -->
+      </div>
+      <!-- /.content-wrapper -->
+    
+      <!-- Control Sidebar -->
+      <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+      </aside>
+      <!-- /.control-sidebar -->
+    
+      <!-- Main Footer -->
+      <app-footer></app-footer>
+    </div>
+    <!-- ./wrapper -->
+    </body>

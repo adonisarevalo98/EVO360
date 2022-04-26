@@ -1,0 +1,188 @@
+
+
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+    <div class="wrapper">
+        <app-topbar></app-topbar>
+        <app-sidebar></app-sidebar>  <!-- ./Sidebar -->
+    
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper">
+           <div class="toast" id="alert_toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-body text-white">
+            </div>
+          </div>
+        <div id="toastsContainerTopRight" class="toasts-top-right fixed"></div>
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+          <div class="container-fluid">
+            <div class="row mb-2">
+              <div class="col-sm-6">
+                <h1 class="m-0">Actualizar Usuario</h1>
+              </div><!-- /.col -->
+    
+            </div><!-- /.row -->
+                <hr class="border-primary">
+          </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+    
+        <!-- Main content -->
+        <section class="content">
+          <div class="spinner" *ngIf="!load"> <!-- Spinner de carga de datos -->
+            <div class="overlay">
+                      <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                    </div>
+            </div>
+          <div class="container-fluid" *ngIf="load"><!-- Espera a la carga de datos -->
+            
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body" >
+                        <form #validatedForm="ngForm" >
+                            <div class="row">
+                                <div class="col-md-6 border-right">
+                                    <div class="form-group">
+                                        <label for="" class="control-label">Nombre</label>
+                                        <input type="text" required pattern="^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$" class="form-control" #nomC="ngModel"
+                                        id="formGroupExampleInput" autocomplete="off" [(ngModel)]="userData.name" name="name">
+                                      <div *ngIf="(nomC.invalid && (nomC.dirty || nomC.touched))" >
+                                        <p class="text-danger" *ngIf="nomC.errors.pattern">Solo se permiten letras</p>
+                                        <p class="text-danger" *ngIf="nomC.errors.required">Campo requerido</p>
+                                      </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="" class="control-label">Apellido</label>
+                                        <input type="text" required pattern="^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$" class="form-control" #apelC="ngModel"
+                                        id="formGroupExampleInput1" autocomplete="off" [(ngModel)]="userData.last_name" name="last_name">
+                                        <div *ngIf="(apelC.invalid && (apelC.dirty || apelC.touched))">
+                                            <p class="text-danger" *ngIf="apelC.errors.pattern">Solo se permiten letras</p>
+                                            <p class="text-danger" *ngIf="apelC.errors.required">Campo requerido</p>
+                                          </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <label for="" class="control-label">Empresa</label>
+                                      <select class="form-control" required [(ngModel)]="userData.id_company" name="id_company"
+                                      #compC="ngModel" (change)="CompselectChangeHandler($event)">
+                                      <option *ngFor="let companies of companies" [value]="companies.id">{{companies.company}}</option>
+                                    </select>
+                                    <div *ngIf="(compC.invalid && (compC.dirty || compC.touched))">
+                                      <p class="text-danger" *ngIf="compC.errors.required">Campo requerido</p>
+                                    </div>                 
+                                  </div>
+                                    <div class="form-group">
+                                      <label for="" class="control-label">Departamento</label>
+                                      <select class="form-control" required  [(ngModel)]="userData.id_department" name="department_id"
+                                      #depC="ngModel" (change)="DepselectChangeHandler($event)">
+                                      <option [value]="" selected></option>
+                                      <option *ngFor="let dpts of departments" [value]="dpts.id">{{dpts.department}}</option>
+                                    </select>
+                                    <div *ngIf="(depC.invalid && (depC.dirty || depC.touched))">
+                                      <p class="text-danger" *ngIf="depC.errors.required">Campo requerido</p>
+                                    </div>                 
+                                  </div>
+                                    <div class="form-group">
+                                        <label for="" class="control-label">Cargo</label>
+                                        <select class="form-control" required  [(ngModel)]="userData.id_employment" name="id_employment"
+                                        #carC="ngModel">
+                                        <option [value]="" selected></option>
+                                        <option *ngFor="let emps of employments" [value]="emps.id">{{emps.employment}}</option>
+                                      </select>
+                                      <div *ngIf="(carC.invalid && (carC.dirty || carC.touched))">
+                                        <p class="text-danger" *ngIf="carC.errors.required">Campo requerido</p>
+                                      </div>                 
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="" class="control-label">Categoria de usuario</label>
+                                        <select class="form-control" required [(ngModel)]="userData.id_user_category" name="id_user_category"
+                                        #catC="ngModel">
+                                        <option *ngFor="let usr_cat of user_categories" [value]="usr_cat.id">{{usr_cat.category}}</option>
+                                      </select>
+                                      <div *ngIf="(catC.invalid && (catC.dirty || catC.touched))">
+                                        <p class="text-danger" *ngIf="depC.errors.required">Campo requerido</p>
+                                      </div>                                
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                  <div class="form-group">
+                                    <label for="" class="control-label">Estado</label>
+                                    <select class="form-control" required [(ngModel)]="userData.status" name="status"
+                                    #statusC="ngModel">
+                                    <option *ngFor="let sts of user_status" [value]="sts.id">{{sts.status}}</option>
+                                  </select>
+                                  <div *ngIf="(statusC.invalid && (statusC.dirty || statusC.touched))">
+                                    <p class="text-danger" *ngIf="statusC.errors.required">Campo requerido</p>
+                                  </div>                 
+                                </div>
+                                    <div class="form-group">
+                                        <label for="" class="control-label">Avatar</label>
+                                        <div class="custom-file">
+                                          <input type="file" class="custom-file-input" id="customFile" name="img" onchange="displayImg(this,$(this))">
+                                          <label class="custom-file-label" for="customFile">Choose file</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group d-flex justify-content-center align-items-center">
+                                        <img src="../../../assets/uploads/1607156820_no-image-available.png" alt="Avatar" id="cimg" class="img-fluid img-thumbnail ">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Email</label>
+                                        <input type="email" required
+                                        pattern="[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*@[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{1,5}"
+                                        class="form-control" id="formGroupExampleInput3" autocomplete="off" [(ngModel)]="userData.email"
+                                        name="email" #emaC="ngModel" placeholder="ejemplo@gmail.com">
+                                      <div *ngIf="(emaC.invalid && (emaC.dirty || emaC.touched))">
+                                        <p class="text-danger" *ngIf="emaC.errors.pattern">Formato de email incorrecto</p>
+                                        <p class="text-danger" *ngIf="emaC.errors.required">Campo requerido</p>
+                                      </div>
+                                    </div>
+                                    <div class="form-group">
+                                      <label class="control-label">Contraseña</label>
+                                      <input type="password" class="form-control" id="formGroupExampleInput4" #passwdC="ngModel"
+                                      autocomplete="off" minlength="8" [(ngModel)]="userData.newpassword" name="newpassword">
+                                    <div *ngIf="(passwdC.invalid && (passwdC.dirty || passwdC.touched))">
+                                      <p class="text-danger" *ngIf="passwdC.errors.minlength">Debe tener 8 caracteres como minimo</p>
+                                    </div>
+                                      <small><i>Dejar en blanco si no quieres cambiar la contraseña</i></small>
+                                  </div>
+                                </div>
+                            </div>
+                            <hr>
+                        </form>
+                        <div class="col-lg-12 text-right justify-content-center d-flex">
+                            <button class="btn btn-primary mr-2" (click)="update()"
+                            [disabled]="!validatedForm.form.valid">Actualizar</button>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <style>
+                img#cimg{
+                    height: 15vh;
+                    width: 15vh;
+                    object-fit: cover;
+                    border-radius: 100% 100%;
+                }
+            </style>
+
+
+          </div><!--/. container-fluid -->
+        </section>
+        <!-- /.content -->
+      </div>
+      <!-- /.content-wrapper -->
+    
+      <!-- Control Sidebar -->
+      <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+      </aside>
+      <!-- /.control-sidebar -->
+    
+      <!-- Main Footer -->
+      <app-footer></app-footer>
+    </div>
+    <!-- ./wrapper -->
+    </body>
+
+
+
+

@@ -1,0 +1,196 @@
+
+
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+    <div class="wrapper">
+        <app-topbar></app-topbar>
+        <app-sidebar></app-sidebar>  <!-- ./Sidebar -->
+    
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper">
+           <div class="toast" id="alert_toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-body text-white">
+            </div>
+          </div>
+        <div id="toastsContainerTopRight" class="toasts-top-right fixed"></div>
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+          <div class="container-fluid">
+            <div class="row mb-2">
+              <div class="col-sm-6">
+                <h1 class="m-0">Gestionar plantillas de items</h1>
+              </div><!-- /.col -->
+    
+            </div><!-- /.row -->
+                <hr class="border-primary">
+          </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+    
+        <!-- Main content -->
+        <section class="content">
+          <div class="container-fluid">
+            
+
+            <div class="col-lg-12">
+                <div class="card card-outline card-primary">
+                    <div class="card-header">
+                        <div class="card-tools">
+                            <a class="btn btn-block btn-sm btn-primary btn-flat border-primary" (click)="clearForm(); frame.show()"><i class="fa fa-plus"></i> Crear nueva plantilla</a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                
+                      <mat-form-field>
+                        <input matInput (keyup)="applyFilter($event.target.value)" 
+                        placeholder="Escriba algo para filtrar">
+                      </mat-form-field>
+
+                      
+                      <div class="example-container mat-elevation-z8">
+                        <mat-table class="table-bordered" [dataSource]="question_templates" matSort>
+                   
+                          <ng-container matColumnDef="Tipo">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header> Tipo</mat-header-cell>
+                                <mat-cell *matCellDef="let row"> {{row.type}} </mat-cell>
+                          </ng-container>
+                  
+                          <ng-container matColumnDef="Descripción">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header> Descripción </mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
+                          </ng-container>
+
+                          <ng-container matColumnDef="Estado">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Estado </mat-header-cell>
+                              
+                            <mat-cell  *matCellDef="let row">
+                                <span *ngIf="row.status==1" class='badge badge-success'>Activada</span>
+                                <span *ngIf="row.status==2" class='badge badge-danger mx-1'>Desactivada</span>
+                             </mat-cell>
+                          </ng-container>
+                         
+                          <ng-container matColumnDef="Acción">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Acciones</mat-header-cell>
+                              <mat-cell *matCellDef="let row">
+                                <button type="button" class="btn btn-primary btn-sm btn-flat border-info wave-effect dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                                    Acción
+                                  </button>
+                                  <div class="dropdown-menu">
+                                    <a type="button" class="dropdown-item view_user" (click)="manageItems(row.id)" routerLink="/list-item/{{row.id}}" >Items</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a type="button" class="dropdown-item" (click)="select(row.id); frame.show()">Editar</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a type="button" class="dropdown-item delete_user" (click)="delete(row.id)">Eliminar</a>
+                                  </div>
+                               </mat-cell>
+                                
+                                
+                          </ng-container>
+                  
+                          <mat-header-row *matHeaderRowDef="displayedColumns" class="encabezado"></mat-header-row>
+                          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                    </mat-table>
+                    <mat-paginator [pageSizeOptions]="[5, 10, 25, 50, 100]" [pageSize]="25" [showFirstLastButtons]></mat-paginator>
+                  </div>
+                        <ng-template #noResults>
+                            <p>No hay resultados para: "{{text}}".</p>
+                          </ng-template>
+                    
+                  </div>
+                </div>
+            </div><!--/. main content -->
+
+<!-- modal form -->
+<div mdbModal #frame="mdbModal" class="modal fade left" id="frameModalTop" tabindex="-1" role="dialog"
+aria-labelledby="myModalLabel" aria-hidden="true">
+<form #validatedForm="ngForm">
+<div class="modal-dialog modal-dialog-scrollable" role="document">
+  <div class="modal-content">
+    <div class="modal-header text-center">
+      <h4 class="modal-title w-100 font-weight-bold">Plantilla</h4>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="frame.hide(); clearForm()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body mx-3">
+      <div class="md-form mb-5">
+        <label for="type">Título:</label>
+      
+      <input type="text" class="form-control" required
+             mdbInput mdbValidate id="formGroupExampleInput" autocomplete="off" 
+             [formControl]="type" name="type">
+             <div *ngIf="type?.touched ">
+              <p class="text-center mt-1 text-danger"
+                *ngIf="type?.errors?.['required']" >
+                <small>Este campo es obligatorio!</small>
+              </p>
+            </div> 
+           <small><i>Indique que se evaluará con esta serie de items</i></small>
+    </div>
+    
+ 
+    <div class="md-form mb-5">
+        <label for="description">Descripción:</label>
+      
+      <textarea cols="30" rows="5" class="form-control" 
+             mdbInput mdbValidate id="formGroupExampleInput" autocomplete="off" 
+             [formControl]="description" name="description"></textarea>
+    </div>
+
+    <div class="md-form mb-5">
+        <label for="status">Estado</label>
+        <select class="form-control" required name="status"
+        [formControl]="status">
+        <option *ngFor="let tempsts of template_status" [value]="tempsts.id">{{tempsts.status}}</option>
+      </select>
+      <div *ngIf="status?.touched ">
+        <p class="text-center mt-1 text-danger"
+          *ngIf="status?.errors?.['required']" >
+          <small>Este campo es obligatorio!</small>
+        </p>
+      </div>                 
+    </div>
+
+    <div class="md-form mb-5">
+      <label for="group">Grupo de criterios</label>
+      <select class="form-control" required  [formControl]="group" name="group">
+      <option *ngFor="let group of crit_groups" [value]="group.id">{{group.title}}</option>
+    </select>               
+  </div>
+   
+    </div>
+    <div class="modal-footer d-flex justify-content-center" *ngIf="method==1">
+      <button mdbBtn color="indigo" class="waves-light" mdbWavesEffect (click)="insert()" 
+      [disabled]="!validatedForm.form.valid">Crear
+        <mdb-icon far icon="paper-plane" class="ml-1"></mdb-icon>
+      </button>
+    </div>
+    <div class="modal-footer d-flex justify-content-center" *ngIf="method==2">
+      <button mdbBtn color="indigo" class="waves-light" mdbWavesEffect (click)="update(); frame.hide()" 
+      [disabled]="!validatedForm.form.valid">Actualizar
+        <mdb-icon far icon="paper-plane" class="ml-1"></mdb-icon>
+      </button>
+    </div>
+   </div>
+</div>
+</form>
+</div><!-- /. modal form -->
+
+
+          </div><!--/. container-fluid -->
+        </section>
+        <!-- /.content -->
+      </div>
+      <!-- /.content-wrapper -->
+    
+      <!-- Control Sidebar -->
+      <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+      </aside>
+      <!-- /.control-sidebar -->
+    
+      <!-- Main Footer -->
+      <app-footer></app-footer>
+    </div>
+    <!-- ./wrapper -->
+    </body>
+

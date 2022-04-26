@@ -1,0 +1,182 @@
+
+
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+    <div class="wrapper">
+        <app-topbar></app-topbar><!-- TopBar -->
+        <app-sidebar></app-sidebar>  <!-- ./Sidebar -->
+      
+    
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper">
+           <div class="toast" id="alert_toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-body text-white">
+            </div>
+          </div>
+        <div id="toastsContainerTopRight" class="toasts-top-right fixed"></div>
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+          <div class="container-fluid">
+            <div class="row mb-2">
+              <div class="col-sm-6">
+                <h1 class="m-0">Evaluadores de: {{evaluationData.title}}</h1>
+              </div><!-- /.col -->
+    
+            </div><!-- /.row -->
+                <hr class="border-primary">
+          </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+    
+        <!-- Main content -->
+        <section class="content">
+          <div class="container-fluid">
+            
+
+            <div class="col-lg-12">
+                <div class="card card-outline card-primary">
+                    <div class="card-header">
+                      <div class="row">
+                        <div class="col-sm-3">
+                         <div class="card-tools">
+                          <a class="btn btn-block btn-sm btn-primary btn-flat border-primary" 
+                          (click)="frame.show();Listusers() "><i class="fa fa-plus"></i> Asignar evaluador</a>
+                      </div>
+                      </div>
+                    </div>
+                        
+                    </div>
+                    <div class="card-body">
+                      <div class="spinner" *ngIf="!load_t1"> <!-- Spinner de carga de datos -->
+                        <div class="overlay">
+                                  <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                                </div>
+                        </div>
+                      <mat-form-field>
+                        <input matInput (keyup)="evaluatorsFilter($event.target.value)" 
+                        placeholder="Escriba algo para filtrar">
+                      </mat-form-field>
+                    
+                      <div class="example-container mat-elevation-z8">
+                        <mat-table [dataSource]="evaluators" matSort *ngIf="load_t1">
+                   
+                            <ng-container matColumnDef="#">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header>#</mat-header-cell>
+                                <mat-cell *matCellDef="let i=index"> {{i+1}} </mat-cell>
+                             </ng-container>
+
+                          <ng-container matColumnDef="Evaluador">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header> Evaluador</mat-header-cell>
+                                <mat-cell *matCellDef="let row"> {{row.name+' '+row.last_name}} </mat-cell>
+                          </ng-container>
+                  
+                          <ng-container matColumnDef="Cargo">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header> Cargo </mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{row.employment}} </mat-cell>
+                          </ng-container>
+
+                          <ng-container matColumnDef="Nivel">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Nivel </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.level}} </mat-cell>
+                      </ng-container>
+                  
+                          <ng-container matColumnDef="Eliminar">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header> Eliminar</mat-header-cell>
+                                <mat-cell *matCellDef="let row"> <div class="btn-group">
+                                  <button type="button" class="btn btn-danger btn-flat manage_department" 
+                                  data-id="dept.id" *ngIf="row.id_level!=1" (click)="delete(row.id)">
+                                    <i class="fas fa-trash"></i>
+                                  </button>
+                            </div> </mat-cell>
+                          </ng-container>
+                  
+                          <mat-header-row *matHeaderRowDef="EvaluatorsColumns" class="encabezado"></mat-header-row>
+                          <mat-row *matRowDef="let row; columns: EvaluatorsColumns;"></mat-row>
+                    </mat-table>
+                    <mat-paginator [pageSizeOptions]="[5, 10, 25, 50, 100]" [pageSize]="25" [showFirstLastButtons]></mat-paginator>
+                  </div>
+                  </div>
+                </div>
+            </div><!--/. main content -->
+
+<!-- modal form -->
+<div mdbModal #frame="mdbModal" class="modal fade left" id="frameModalTop" tabindex="-1" role="dialog"
+aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-dialog-scrollable" role="document">
+  <div class="modal-content">
+    <div class="modal-header text-center">
+      <h4 class="modal-title w-100 font-weight-bold">Empleados de {{companyData.company}}</h4>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="frame.hide()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body mx-3">
+      
+        <div class="card-body">
+            <mat-form-field>
+              <input matInput (keyup)="usersFilter($event.target.value)" 
+              placeholder="Escriba algo para filtrar">
+            </mat-form-field>
+            <div class="example-container mat-elevation-z8">
+              <mat-table [dataSource]="users" matSort >
+         
+                  <ng-container matColumnDef="#">
+                      <mat-header-cell *matHeaderCellDef mat-sort-header>#</mat-header-cell>
+                      <mat-cell *matCellDef="let i=index"> {{i+1}} </mat-cell>
+                   </ng-container>
+
+                <ng-container matColumnDef="Usuario">
+                      <mat-header-cell *matHeaderCellDef mat-sort-header> Usuario</mat-header-cell>
+                      <mat-cell *matCellDef="let row"> {{row.name+' '+row.last_name}} </mat-cell>
+                </ng-container>
+        
+                <ng-container matColumnDef="Cargo">
+                      <mat-header-cell *matHeaderCellDef mat-sort-header> Cargo </mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.employment}} </mat-cell>
+                </ng-container>
+        
+                <ng-container matColumnDef="Asignar">
+                      <mat-header-cell *matHeaderCellDef mat-sort-header> Asignar</mat-header-cell>
+                      <mat-cell *matCellDef="let row"> <div class="btn-group">
+                        <button type="button" class="btn btn-success btn-flat  manage_department" data-id="dept.id" (click)="Create(row.id)">
+                          <i class="fas fa-check"></i>
+                        </button>
+                  </div> </mat-cell>
+                </ng-container>
+        
+                <mat-header-row *matHeaderRowDef=" UsersColumns" class="encabezado"></mat-header-row>
+                <mat-row *matRowDef="let row; columns:  UsersColumns;"></mat-row>
+          </mat-table>
+          <mat-paginator [pageSizeOptions]="[10]" [pageSize]="10" [showFirstLastButtons]></mat-paginator>
+        </div>
+        </div>
+   
+    </div>
+    <div class="modal-footer d-flex justify-content-center" >
+      <button mdbBtn color="indigo" class="waves-light" mdbWavesEffect
+       (click)="frame.hide()" >Aceptar
+        <mdb-icon far icon="paper-plane" class="ml-1"></mdb-icon>
+      </button>
+    </div>
+   </div>
+</div>
+</div><!-- /. modal form -->
+
+
+          </div><!--/. container-fluid -->
+        </section>
+        <!-- /.content -->
+      </div>
+      <!-- /.content-wrapper -->
+    
+      <!-- Control Sidebar -->
+      <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+      </aside>
+      <!-- /.control-sidebar -->
+    
+      <!-- Main Footer -->
+      <app-footer></app-footer>
+    </div>
+    <!-- ./wrapper -->
+    </body>
+

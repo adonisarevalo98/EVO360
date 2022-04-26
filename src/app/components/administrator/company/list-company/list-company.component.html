@@ -1,0 +1,190 @@
+
+
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+    <div class="wrapper">
+        <app-topbar></app-topbar>
+        <app-sidebar></app-sidebar>  <!-- ./Sidebar -->
+    
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper">
+           <div class="toast" id="alert_toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-body text-white">
+            </div>
+          </div>
+        <div id="toastsContainerTopRight" class="toasts-top-right fixed"></div>
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+          <div class="container-fluid">
+            <div class="row mb-2">
+              <div class="col-sm-6">
+                <h1 class="m-0">Gestionar empresas</h1>
+              </div><!-- /.col -->
+    
+            </div><!-- /.row -->
+                <hr class="border-primary">
+          </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+    
+        <!-- Main content -->
+        <section class="content">
+          <div class="container-fluid">
+            
+
+            <div class="col-lg-12">
+                <div class="card card-outline card-primary">
+                    <div class="card-header">
+                         <div class="card-tools">
+                          <a class="btn btn-block btn-sm btn-primary btn-flat border-primary" (click)="clearForm(); frame.show()"><i class="fa fa-plus"></i> Crear nueva empresa</a>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                
+                      <mat-form-field>
+                        <input matInput (keyup)="applyFilter($event.target.value)" 
+                        placeholder="Escriba algo para filtrar">
+                      </mat-form-field>
+
+                      
+                      <div class="example-container mat-elevation-z8">
+                        <mat-table [dataSource]="companies" matSort>
+                   
+                          <ng-container matColumnDef="Empresa">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header> Empresa</mat-header-cell>
+                                <mat-cell *matCellDef="let row"> {{row.company}} </mat-cell>
+                          </ng-container>
+                  
+                          <ng-container matColumnDef="Estado">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header> Estado </mat-header-cell>
+                        <mat-cell *matCellDef="let row"> 
+                            <span *ngIf="row.status==1"
+                            class='badge badge-success'>Activada</span>
+                            <span *ngIf="row.status==2"
+                            class='badge badge-danger mx-1'>Desactivada</span>
+                         </mat-cell>
+                        
+                          </ng-container>
+                  
+                          <ng-container matColumnDef="Acción">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header> Acciones</mat-header-cell>
+                                <mat-cell *matCellDef="let row"> <div class="btn-group">
+                                  <a href="javascript:void(0)" data-id='dept.id' class="btn btn-primary btn-flat  manage_department"  (click)="select(row.id); frame.show()" >
+                                    <i class="fas fa-edit"></i>
+                                  </a>
+                                  <button type="button" class="btn btn-danger btn-flat manage_department" data-id="dept.id" (click)="delete(row.id)">
+                                    <i class="fas fa-trash"></i>
+                                  </button>
+                            </div> </mat-cell>
+                          </ng-container>
+                  
+                          <mat-header-row *matHeaderRowDef="displayedColumns" class="encabezado"></mat-header-row>
+                          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                    </mat-table>
+                    <mat-paginator [pageSizeOptions]="[5, 10, 25, 50, 100]" [pageSize]="25" [showFirstLastButtons]></mat-paginator>
+                  </div>
+                  </div>
+                </div>
+            </div><!--/. main content -->
+
+<!-- modal form -->
+
+
+<div mdbModal #frame="mdbModal" class="modal fade top" id="frameModalTop" tabindex="2" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+     <form [formGroup]="form">
+  <div class="modal-dialog cascading-modal modal-avatar modal-md" role="document">
+
+  <div class="modal-content">
+      <!--Header-->
+    <div class="modal-header text-center">
+        <img src="https://mdbootstrap.com/img/Photos/Avatars/img%20%281%29.webp" alt="avatar"
+             class="rounded-circle img-responsive">
+      <h4 class="modal-title w-100 font-weight-bold" *ngIf="method==1">Nueva empresa</h4>
+      <h4 class="modal-title w-100 font-weight-bold" *ngIf="method==2">Actualizando empresa</h4>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="frame.hide()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body  mx-3 scroll "><!--Body-->
+        <div >
+      <div class="md-form mb-5">
+        <label for="company">Nombre de empresa:</label>
+      
+      <input type="text" class="form-control" required
+             mdbInput mdbValidate autocomplete="off" 
+              name="company" [formControl]="company">
+              <div *ngIf="company?.touched ">
+                <p class="text-center mt-1 text-danger"
+                  *ngIf="company?.errors?.['required']" >
+                  <small>Este campo es obligatorio!</small>
+                </p>
+              </div>     
+    </div>
+ 
+    <div class="md-form mb-5">
+        <label for="status">Estado de empresa:</label>
+      
+      <select class="form-control" required
+             mdbInput mdbValidate autocomplete="off" 
+              name="status" [formControl]="status">
+              <option *ngFor="let sts of company_status" [value]="sts.id">{{sts.status}}</option>
+              </select>
+              <div *ngIf="status?.touched ">
+                <p class="text-center mt-1 text-danger"
+                  *ngIf="status?.errors?.['required']" >
+                  <small>Este campo es obligatorio!</small>
+                </p>
+              </div>     
+    </div>
+
+    <div class="md-form mb-5">
+        <label for="logo">Logo:</label>
+        <div class="custom-file">
+            <input type="file" accept=".png,.jpeg,.jpg" class="custom-file-input"  mdbInput mdbValidate name="logo"
+             onchange="displayImg(this,$(this))" [formControl]="logo">
+            <label class="custom-file-label" for="customFile">Choose file</label>
+          </div> 
+    </div>
+
+    <div class="form-group d-flex justify-content-center align-items-center">
+        <img src="../../../assets/uploads/1607156820_no-image-available.png" alt="Avatar" id="cimg" class="img-fluid img-thumbnail ">
+    </div>
+ 
+</div>
+    </div>
+    <div class="modal-footer d-flex justify-content-center" *ngIf="method==1">
+      <button type="submit" mdbBtn color="indigo" class="waves-light" 
+      mdbWavesEffect  [disabled]="!form.valid" (click)="insert()"  >Crear
+        <mdb-icon far icon="paper-plane" class="ml-1"></mdb-icon>
+      </button>
+    </div>
+    <div class="modal-footer d-flex justify-content-center" *ngIf="method==2">
+      <button type="submit" mdbBtn color="indigo" class="waves-light"
+       mdbWavesEffect [disabled]="!form.valid" (click)="update(); frame.hide()" >Actualizar
+        <mdb-icon far icon="paper-plane" class="ml-1"></mdb-icon>
+      </button>
+    </div>
+   </div>
+</div>
+</form>
+</div><!-- /. modal form -->
+
+
+          </div><!--/. container-fluid -->
+        </section>
+        <!-- /.content -->
+      </div>
+      <!-- /.content-wrapper -->
+    
+      <!-- Control Sidebar -->
+      <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+      </aside>
+      <!-- /.control-sidebar -->
+    
+      <!-- Main Footer -->
+      <app-footer></app-footer>
+    </div>
+    <!-- ./wrapper -->
+    </body>
+
