@@ -1,0 +1,25 @@
+*composer install (Previamente se debe instalar la ultima 
+version de composer desde: https://getcomposer.org/Composer-Setup.exe)
+*composer require doctrine/dbal (para generar campos nulos o no nulos en la bdd)
+
+*composer require tymon/jwt-auth (Cargar paquete para autenticación JWT)
+
+*composer require laravel/sanctum (Paquete para autenticación con sanctum)
+*php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
+
+*npm install -g heroku (Opcional y solo si se desea hacer un deploy en Heroku)
+ // Enlace actual: https://hyderp.herokuapp.com/
+ /* ejemplo para definir llave en Heroku 
+ 1) heroku create hyderp
+ 2) echo "web: vendor/bin/heroku-php-apache2 public/" > Procfile
+ 3) hacer push en la branch donde se creó la app heroku 
+ 4) heroku config:set -a hyderp KEY=base64:xMbyaFN+x0VvHaqeVl+lMWrQHTygK0+raPT4XKhrJq8=
+ */
+
+
+ //EN CASO DE QUE LARAVEL NO ESTE REALIZANDO CAMBIOS
+ php artisan config:clear
+php artisan cache:clear
+composer dump-autoload
+php artisan view:clear
+php artisan route:clear
